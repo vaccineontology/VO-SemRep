@@ -15,11 +15,33 @@ Installation details to be provided here ....
    - How to use these files.
    - Possible bugs and how to solve them. 
 
-## General SemRep installation introduction:
+## General SemRep installation:
+The general steps of installing SemRep can be found in the SemRep repo [here](https://github.com/lhncbc/SemRep). The SemRep linked provide installation steps for 2006AA and 2018AA of UMLS release. If you wish to use newer release of UMLS, navigate below.
 
-Here we just provide some introduction and links: 
-   - https://github.com/lhncbc/SemRep 
-   - Give some links and summarize the important points. 
+### Using SemRep with updated UMLS Metathesaurus:
+Because SemRep hasn't been updated in a while, we need to do some workaround for SemRep to work with newer version of UMLS Metathesaurus. 
+   1. Make sure you have installed the UMLS release you wanted to use it with.  
+   2. Navigate to <SemRep dir>/DATA/UMLS_HIERARCHY folder, and make a copy of each hierarchy file from 2006AA and 2018AA. Then for each copy, rename it to the {YEAR}{VERSION} of your chosen UMLS release, as shown below.   
+```
+hrel-UMLS_btree.2006AA_1
+hrel-UMLS_btree.2006AA_2
+...
+hrel-UMLS_btree.2006AA_5
+hrel-UMLS_btree.2018AA_1
+
+// example: 2022AB
+// rename the files to
+
+hrel-UMLS_btree.2022AB_1
+hrel-UMLS_btree.2022AB_2
+...
+hrel-UMLS_btree.2022AB_5
+hrel-UMLS_btree.2022AB_6
+
+// You should have 6 new hierarchy files.
+```
+   3. Add {YEAR} to "AVAILABLE DATA" variable in <SemRep dir>/bin/install.sh file.
+   4. Follow general steps of installation from SemRep repo. 
 
 ## VO customization for SemRep. 
 
