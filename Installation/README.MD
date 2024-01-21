@@ -46,9 +46,9 @@ hrel-UMLS_btree.2022AB_6
 ### Introduce Background with EFO customization
 Generating a custom database for UMLS/SemRep use is made possible by Data File Builder. Navigate to this [link](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/additional-tools/DataFileBuilder.html) to explore the Data File Builder README and the given example using Experimental Factor Ontology (EFO). Though the way the example is demonstrated is for MetaMap use and not SemRep. So, there are a few workarounds to make it work with SemRep.
 
-[!NOTE]
-The EFO instruction was prepared a long time ago, and the file provided (efo2dfb.zip) on the page is made a decade ago. 
-SemRep won't work without setting the semantic types of concepts properly. The given example sets every concept's semantic type to unknown and this works with MetaMap but not SemRep.
+> [!NOTE]
+> The EFO instruction was prepared a long time ago, and the file provided (efo2dfb.zip) on the page is made a decade ago. 
+> SemRep won't work without setting the semantic types of concepts properly. The given example sets every concept's semantic type to unknown and this works with MetaMap but not SemRep.
 
 ### Preparation and Usage of VO-related files for SemRep to use. 
 
@@ -60,8 +60,8 @@ SemRep won't work without setting the semantic types of concepts properly. The g
 ```
 3. Follow the directions provided in the [Data File Builder README.](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/Docs/datafilebuilder.pdf). The files generated should be pasted in /<db>/umls folder.
 
-[!IMPORTANT]
-Semantic type assignment in vo_extract.py is inaccurate as it only assigns semantic type based on the source ontology. More accurate assignment is required and will be addressed/updated soon as it is a work in progress.
+> [!IMPORTANT]
+> Semantic type assignment in vo_extract.py is inaccurate as it only assigns semantic type based on the source ontology. More accurate assignment is required and will be addressed/updated soon as it is a work in progress.
 
 ### Possible bugs and how to solve them. 
 
