@@ -1,7 +1,9 @@
 import argparse
 import time
+import logging
 from Bio import Entrez, Medline
 import subprocess
+from urllib.error import HTTPError
 
 """
 Ideal goal: 
@@ -60,10 +62,43 @@ def append_file(source_file, destination_file):
     with open(destination_file, 'a') as destination:
         destination.write(f"\n{data}")
 
+# Set the maximum number of retries
+max_retries = 3
 
-def main(args):
+# Function to fetch records with retries on HTTPError
+def fetch_records(pubmed_ids, start, end, batch_size):
+    attempts = 0
+    while attempts < max_retries:
+        try:
+            # Fetch records using Entrez.efetch
+            stream = Entrez.efetch(
+                db="pubmed",
+                rettype="medline",
+                retmode="text",
+                retmax=batch_size,
+                id=pubmed_ids[start:end]
+            )
+            # If fetch is successful, break out of the loop
+            return stream
+        except HTTPError as e:
+            print(f"HTTPError occurred: {e}")
+            attempts += 1
+            if attempts < max_retries:
+                wait_time = 2 ** attempts  # Exponential backoff
+                print(f"Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                print("Maximum number of retries reached. Stopping program.")
+                exit(1)
+                # Handle the failure, e.g., by logging it, returning None, or re-raising the error
+    return None
 
-    Entrez.email = args.email  # Replace with your email address
+
+def main():
+
+    logger = logging.getLogger(__name__)
+
+    Entrez.email = "imdan@umich.edu" # Replace with your email address
 
     # METHOD 1: Query for abstract lists
     # if args.method.lower() == "search":
@@ -81,16 +116,20 @@ def main(args):
     batch_size = 10 # Hard-coded value
     retmax = 1000 # Hard-coded value
     # Perform the search
-    search_results = Entrez.read(
-        Entrez.esearch(
-            db="pubmed",
-            term=search_term,
-            retmax=retmax,
-            reldate=reldate_days,
-            datetype="pdat",
-            usehistory="y"
+    try:
+        search_results = Entrez.read(
+            Entrez.esearch(
+                db="pubmed",
+                term=search_term,
+                retmax=retmax,
+                reldate=reldate_days,
+                datetype="pdat",
+                usehistory="y"
+            )
         )
-    )
+    except HTTPError as e:
+        logger.error(e)
+        raise
     count = int(search_results["Count"])
     print(f"Found {count} results")
     # if args.max_res != -1:
@@ -125,13 +164,7 @@ def main(args):
         print(f"Going to download record {start + 1} to {end}")
 
         # Fetch records using Entrez.efetch
-        stream = Entrez.efetch(
-            db="pubmed",
-            rettype="medline",
-            retmode="text",
-            retmax=batch_size,
-            id=pubmed_ids[start:end]
-        )
+        stream = fetch_records(pubmed_ids, start, end, batch_size)
 
         # Parse the XML content
         records = Medline.parse(stream)
@@ -168,7 +201,7 @@ def main(args):
                 # check if result is not an error
                 if 'ERROR' not in cmd_out:
                     # assuming output.txt is the file to which you want to append the result
-                    append_file("dummy_output.txt", "test_output.txt")
+                    append_file("dummy_output.txt", "semrep_output.txt")
                     # output_file.write(result)
                 else: # Found: Never execute because SemRep error message is not included in cmd_out
                     print('Error in SemRep execution for abstract: ', pubmed_ids[start])
@@ -194,9 +227,9 @@ def main(args):
     print(f"{len(failed)} of total {retmax} failed to parse.\n")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='fetch abstracts from PubMed and run SemRep')
+    main()
+    # parser = argparse.ArgumentParser(
+    #     description='fetch abstracts from PubMed and run SemRep')
     # parser.add_argument('method', help='search/import')
-    parser.add_argument('email', help='name@email.com')
-    args = parser.parse_args()
-    main(args)
+    # parser.add_argument('email', help='name@email.com')
+    # args = parser.parse_args()
