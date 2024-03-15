@@ -21,7 +21,7 @@ cd <path>/public_mm
 ![High-level overview](image.png)
 The "fetch_abstracts.py" script will fetch a collection of PubMed IDs of matching results. Then, for each of the PubMed ID, it will get the title and the abstract text and write it into a file "input_abstract.txt". Then, this file will be processed by SemRep. This means that, at one time, only one abstract is processed in order to avoid SemRep halting when encountering any errors. The result for an abstract is then passed into "dummy_output.txt" and appended into "semrep_output.txt".  
 
-I've included a txt-to-xlsx SemRep output converter in case anyone would like to analyze the data in tabular form.
+I've included a txt-to-xlsx SemRep output converter in case anyone would like to analyze the data in tabular form. Note that in the script, I've also included certainty prediction for each entry.
 
 ### How to use
 Before using fetch_abstrcts.py, check and change the hard-coded values.
